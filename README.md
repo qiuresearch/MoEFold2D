@@ -22,6 +22,8 @@ The simplest way is to create a new anaconda environment using the environment_[
 
 This will create conda environment "paddle26".
 
+### LinearFold
+This repository is shipped with pre-compiled linearfold binaries under "bin" directory. In case it is incompatible with your system, please customize the installation following instructions in https://github.com/LinearFold/LinearFold.
 
 ## Usage
 run_moefold2d.sh should be the only script needed to run the code. 
