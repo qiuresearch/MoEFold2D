@@ -27,11 +27,12 @@ default_model=${loco_models_upsample[-1]}
 Usage: ${0##*/} action data_files [cmOptions]
 
 Arguments:
-    action          : one of train, predict, or brew_dbn/brew_ct/brew_bpseq
+    action          : only predict is supported at this time
     data_files      : pkl file(s) for train, fasta file(s) for predict, folder for brew_dbn/ct/bpseq
-    -model       [] : choose a single model from the following:
+    -upsample    [] : use models trained with upsampling (default: True)
+    -model       [] : run a single model from the following (default: all models will be run):
 "
-    printf "                      %-72s\n" "${loco_models_upsample[@]}"
+    printf "                          %-72s\n" "${loco_models[@]}"
     # -devset      [] : one of stral-ND, stral-NR80, bprna-TR0VL0 (case insensitive)
     # -params      [] : one of 400K, 960K, 1.4M, 3.5M (case insensitive)
 echo -e "
@@ -52,7 +53,7 @@ while read -r var ; do vars_before+=("$var") ; done <<< $(set)
 while [ $# -gt 0 ]; do
     case "$1" in
         -h|--help) $0 ; exit 0 ;;
-        *-dryrun)
+        *-dryrun|*-upsample)
             declare ${1##*-}=TRUE ; shift
             ;;
         *-model|*-devset|*-params)
@@ -84,6 +85,7 @@ while [ $# -gt 0 ]; do
     esac
 done
 
+# check if the required parameters are provided
 case "${action^^}" in
     TRAIN|BREW*|PREDICT)
         [[ -z "${data_files}" ]] && {
@@ -97,8 +99,12 @@ case "${action^^}" in
         ;;
 esac
 
+# initialize more variables
+: ${upsample:=TRUE}
 pkg_dir="$(dirname $0)"
 src_dir="$(dirname $0)/src"
+[[ is${upsample^^} == isTRUE ]] && loco_models=("${loco_models_upsample[@]}")
+[[ ! -z "${model}" ]] && loco_models=("${model}")
 
 # show changed variables
 while read -r var ; do vars_after+=("$var") ; done <<< $(set)
