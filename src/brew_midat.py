@@ -20,12 +20,9 @@ from tqdm import tqdm
 
 # homebrew
 import gwio
-import gwplot
 import misc
 import molstru
 from molstru import reslet_lookup, seq_fuzzy_match
-import molalign
-import glance_df
 
 logger = logging.getLogger(__name__)
 
@@ -338,7 +335,7 @@ def save_individual_files(
 
     save_ppmat = 'ppmat' in save_genre and 'ppmat' in df.columns
 
-    if save_ct: logger.critical(f'Saving in ct format is not yet implemented!')
+    # if save_ct: logger.critical(f'Saving in ct format is not yet implemented!')
 
     fasta_id_icol = df.columns.get_loc(fasta_id)
     for i in tqdm(rows, mininterval=1, desc=save_dir, disable=tqdm_disable):

@@ -16,7 +16,6 @@ from scipy.signal import convolve2d
 from tqdm import tqdm
 
 # homebrew
-import geometry as geom
 import misc
 import molstru_config
 from gwio import get_file_lines
@@ -1888,15 +1887,50 @@ def ct2dbn(ct, l=None):
     """
     if l is None: l = ct.max()
 
-    dbn = np.array(['.'] * l)
+    letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' # UPPER/lower pairs are for pseudoknots
+    open_sym = '([{<' + letters
+    shut_sym = ')]}>' + letters.lower()
 
-    if ct.ndim == 2 and ct.shape[1] == 2:
-        dbn[ct[:, 0] - 1] = '('
-        dbn[ct[:, 1] - 1] = ')'
-    elif len(ct):
-        logger.warning(f'ct: {ct} is not empty ({ct}) but ct.ndim != 2')
-    else:
-        logger.debug(f'ct: {ct} is empty with shape: {ct.shape}')            
+    # initialize for open and shut stacks to share the SAME list
+    open_stack = {}
+    shut_stack = {}
+    for i in range(len(open_sym)):
+        open_stack[open_sym[i]] = shut_stack[shut_sym[i]] = []
+        
+    dbn = np.array(['.'] * l)
+        
+    # if ct.ndim == 2 and ct.shape[1] == 2:
+    #     dbn[ct[:, 0] - 1] = '('
+    #     dbn[ct[:, 1] - 1] = ')'
+    # elif len(ct):
+    #     logger.warning(f'ct: {ct} is not empty ({ct}) but ct.ndim != 2')
+    # else:
+    #     logger.debug(f'ct: {ct} is empty with shape: {ct.shape}')  
+
+    nest_level = 0
+    open_min, open_max, close_min, close_max = 0, 0, 0, 0
+    
+    # assume ct is sorted: i < j and i in ascending order
+    for i, j in ct:
+        if i > close_max: # all existing nests are completed
+            nest_level = 0 # this starts from zero (incorrect!)
+            open_min, open_max = i, i
+            close_min, close_max = j, j
+        elif j < close_min: # continue current nest
+            open_max = i
+            close_min = j
+        elif j < close_max: # a pseudoknot completely within the current nest (flawed assumption!)
+            nest_level += 1
+            open_max = i
+            close_min = j
+            close_max = j
+        else: # a pseudoknot that spans across the current nest (flawed assumption!)
+            nest_level += 1
+            close_min = j
+            close_max = j
+            
+        dbn[i - 1] = open_sym[nest_level]
+        dbn[j - 1] = shut_sym[nest_level]
 
     return ''.join(dbn)
 
@@ -1938,7 +1972,7 @@ def ct2ctmat(ct, l=None, dtype=np.int32):
 
 
 def ppmat2ctmat(ppmat, threshold=0.5, dtype=np.int32):
-    """ ppmat is continuous, return ct as nx2 numpy array """
+    """ ppmat is continuous, return ctmat as nxn numpy array """
 
     ctmat = np.zeros(ppmat.shape, dtype=dtype)
 
@@ -1949,6 +1983,15 @@ def ppmat2ctmat(ppmat, threshold=0.5, dtype=np.int32):
         ctmat[idx_max] = (ppmat[idx_max] >= threshold).astype(ctmat.dtype)
 
     return ctmat
+
+
+def ppmat2ct(ppmat, threshold=0.5, dtype=np.int32):
+    """ ppmat is continuous, return ct as nx2 numpy array """
+
+    ct = np.stack(np.where(ppmat >= threshold), axis=1).astype(dtype) + 1
+    ct = ct[ct[:, 1] > ct[:, 0]]
+
+    return ct
 
 
 def ctmat2ct(ctmat):

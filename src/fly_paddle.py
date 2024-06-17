@@ -3337,18 +3337,22 @@ def launch_predict(args):
     miset = get_dataset(midat, args)
 
     # get save_path
-    save_stem = Path(args.predict_files[0]).resolve()
-    if len(args.predict_files) == 1:
-        save_stem = f'{save_stem.parent.stem}.{save_stem.stem}.predict'
+    if args.save_subdir is None:
+        save_subdir = Path(args.predict_files[0]).resolve()
+        if len(args.predict_files) == 1:
+            save_subdir = f'{save_subdir.parent.stem}.{save_subdir.stem}.predict'
+        else:
+            save_subdir = f'{save_subdir.parent.stem}.predict'
     else:
-        save_stem = f'{save_stem.parent.stem}.predict'
+        save_subdir = args.save_subdir
 
     # if args.save_dir.samefile(args.load_dir):
     if 'save_dir' in args.kwargs:
-        save_path = args.save_dir / save_stem
+        save_path = args.save_dir / save_subdir
         gwio.dict2json(vars(args), fname='args.json', fdir=save_path)
     else:
-        save_path = args.load_dir / save_stem
+        save_path = args.load_dir / save_subdir
+
     save_path.mkdir(parents=True, exist_ok=True)
 
     y_guess_all = predict(model, miset, shuffle=False, drop_last=False,

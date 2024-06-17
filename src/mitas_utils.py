@@ -70,6 +70,7 @@ def parse_args(*argv):
     paparser.add_argument(*flex_var('-save_dir'), metavar='', type=str, nargs='?', const=None, default=None, help="for saving model and results (default: auto-generated")
     paparser.add_argument(*flex_var('-save_dir_prefix'), metavar='', type=str, nargs='?', const='', default=None, help="prefix to add to save_dir")
     paparser.add_argument(*flex_var('-save_dir_suffix'), metavar='', type=str, nargs='?', const='', default=None, help="suffix to add to save_dir")
+    paparser.add_argument(*flex_var('-save_subdir'), metavar='', type=str, default=None, help="for saving model args, src file, states, and results (default: None)")
     paparser.add_argument(*flex_var('-save_level'), type=int, default=2, metavar='', help="0: no save, 1: final only, 2: all interim")
     paparser.add_argument(*flex_var('-save_groupby'), metavar='', type=str, nargs='+', default=['epoch', 'batch'], help="groupby columns, e.g., batch, epoch")
     # paparser.add_argument(*flex_var('-log_sep'), type=str, default="="*7, metavar='', help='divider string for logger')

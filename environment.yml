@@ -1,0 +1,15 @@
+name: paddle26
+channels:
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+  - defaults
+dependencies:
+  - python=3.12
+  - cudatoolkit=11.7
+  - paddlepaddle-gpu==2.6.1
+  - pandas
+  - numpy
+  - scikit-learn
+  - tqdm
+  - biopython
+prefix: /home/xqiu/anaconda3/envs/paddle26
