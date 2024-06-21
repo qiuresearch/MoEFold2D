@@ -4,15 +4,22 @@ A Mixture of Expert Approach to RNA Secondary Structure Prediction based on a Le
 ## Contents
 1. src folder
    - contains all python codes for training, evaluation, and prediction
-2. models folder
+2. data folder
+   - ClustRNA2D dataset: metafam2d.pkl and metafam2d_nr80.pkl (redundancy below 80%)
+   - TS80 test set: metafam2d_nr80_test.pkl
+   - NR90 seen set: metafam2d_SUB_nr80_test_nr80.pkl
+   - NR80 seen set: metafam2d_SUB_nr80_test_nr80_nr80.pkl
+   
+   Each pkl file is a Pandas dataframe to be read via "pandas.read_pickle()". The relevant colums are: "id", "seq", "dbn", "ct".
+3. models folder
    - contains saved SeqFold2D LOCO models. For each model, you can find 
       - args.json, the configuration file
       - minets_paddle.py, the source code at the time of model creation
       - net.state, the model state dictionary
       - opt.state, the optimizer state dictionary
-3. examples folder
+4. examples folder
    - contains example fasta input files
-4. run_moefold2d.sh - the main script
+5. run_moefold2d.sh - the main script
 
    
 ## Install
