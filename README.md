@@ -10,7 +10,7 @@ A Mixture of Expert Approach to RNA Secondary Structure Prediction based on a Le
    - NR90 seen set: metafam2d_SUB_nr80_test_nr80.pkl
    - NR80 seen set: metafam2d_SUB_nr80_test_nr80_nr80.pkl
    
-   Each pkl file is a Pandas dataframe to be read via "pandas.read_pickle()". The relevant colums are: "id", "seq", "dbn", "ct".
+   Each pkl file is a Pandas dataframe to be read via "pandas.read_pickle()". The relevant colums are: "id", "seq", "dbn", "ct". For upsampling, use the column "moltype" for the RNA cluster/type information.
 3. models folder
    - contains saved SeqFold2D LOCO models. For each model, you can find 
       - args.json, the configuration file
